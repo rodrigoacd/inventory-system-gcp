@@ -1,0 +1,103 @@
+{% extends "base.html" %}
+
+{% block title %}{{ product.name }} - Detalle{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-4">
+        {% if product.image_url %}
+            <img src="{{ product.image_url }}" alt="{{ product.name }}" class="img-fluid rounded">
+        {% else %}
+            <div class="text-center p-5 bg-light rounded">
+                <i class="bi bi-image" style="font-size: 100px;"></i>
+            </div>
+        {% endif %}
+    </div>
+    <div class="col-md-8">
+        <h2>{{ product.name }}</h2>
+        <p class="text-muted">{{ product.description or 'Sin descripción' }}</p>
+        
+        <table class="table">
+            <tr>
+                <th>SKU:</th>
+                <td><code>{{ product.sku }}</code></td>
+            </tr>
+            <tr>
+                <th>Categoría:</th>
+                <td><span class="badge bg-secondary">{{ product.category or 'Sin categoría' }}</span></td>
+            </tr>
+            <tr>
+                <th>Cantidad en Stock:</th>
+                <td>
+                    <span class="badge {% if product.quantity < 10 %}bg-danger{% elif product.quantity < 50 %}bg-warning{% else %}bg-success{% endif %} fs-5">
+                        {{ product.quantity }} unidades
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <th>Precio:</th>
+                <td><strong>${{ "%.2f"|format(product.price) }}</strong></td>
+            </tr>
+        </table>
+
+        <h4 class="mt-4">Actualizar Inventario</h4>
+        <form method="POST" action="{{ url_for('update_inventory', product_id=product.id) }}" class="row g-3">
+            <div class="col-md-3">
+                <label class="form-label">Tipo</label>
+                <select name="type" class="form-select" required>
+                    <option value="IN">Entrada</option>
+                    <option value="OUT">Salida</option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <label class="form-label">Cantidad</label>
+                <input type="number" name="quantity" class="form-control" min="1" required>
+            </div>
+            <div class="col-md-4">
+                <label class="form-label">Notas</label>
+                <input type="text" name="notes" class="form-control">
+            </div>
+            <div class="col-md-2">
+                <label class="form-label">&nbsp;</label>
+                <button type="submit" class="btn btn-primary w-100">Actualizar</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<h4 class="mt-5">Historial de Transacciones</h4>
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Fecha</th>
+            <th>Tipo</th>
+            <th>Cantidad</th>
+            <th>Notas</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for trans in transactions %}
+        <tr>
+            <td>{{ trans.created_at.strftime('%Y-%m-%d %H:%M') }}</td>
+            <td>
+                {% if trans.transaction_type == 'IN' %}
+                    <span class="badge bg-success">Entrada</span>
+                {% else %}
+                    <span class="badge bg-danger">Salida</span>
+                {% endif %}
+            </td>
+            <td>{{ trans.quantity }}</td>
+            <td>{{ trans.notes or '-' }}</td>
+        </tr>
+        {% else %}
+        <tr>
+            <td colspan="4" class="text-center">No hay transacciones registradas</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<a href="{{ url_for('index') }}" class="btn btn-secondary mt-3">
+    <i class="bi bi-arrow-left"></i> Volver a la lista
+</a>
+{% endblock %}
