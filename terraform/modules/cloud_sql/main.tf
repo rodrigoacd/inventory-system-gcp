@@ -13,9 +13,25 @@ resource "google_sql_database_instance" "mysql" {
     disk_size         = 10
     disk_type         = "PD_SSD"
 
+    # FEATURE: Configuración avanzada de backups
     backup_configuration {
-      enabled            = true
-      binary_log_enabled = true
+      enabled                        = true
+      binary_log_enabled            = true
+      start_time                    = "03:00"
+      point_in_time_recovery_enabled = true
+      transaction_log_retention_days = 7
+      
+      backup_retention_settings {
+        retained_backups = 7
+        retention_unit   = "COUNT"
+      }
+    }
+
+    # FEATURE: Maintenance window
+    maintenance_window {
+      day          = 7
+      hour         = 3
+      update_track = "stable"
     }
 
     ip_configuration {
@@ -26,6 +42,17 @@ resource "google_sql_database_instance" "mysql" {
         name  = "allow-all"
         value = "0.0.0.0/0"
       }
+    }
+
+    # FEATURE: Database flags
+    database_flags {
+      name  = "max_connections"
+      value = "100"
+    }
+
+    database_flags {
+      name  = "slow_query_log"
+      value = "on"
     }
   }
 
