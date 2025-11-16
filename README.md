@@ -56,7 +56,6 @@ Sistema web de inventario para pequeños negocios que incluye:
 ## 📦 Prerequisitos
 
 ### Software Requerido:
-
 ```bash
 # 1. Google Cloud SDK
 # macOS:
@@ -441,9 +440,10 @@ terraform destroy
 - [Documentación de Cloud SQL](https://cloud.google.com/sql/docs)
 - [Guía de mejores prácticas de GCP](https://cloud.google.com/architecture/framework)
 
+
 ## 👤 Autor
 
-Rodrigo ACD - Proyecto DevOps con Infrastructure as Code
+Rodrigo Contreras (rodrigo.acd@gmail.com)
 
 ## 📄 Licencia
 
